@@ -1,5 +1,4 @@
 <?php
-// [화면 3.2: 퀴즈]
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
@@ -28,9 +27,11 @@ $quizLanguages = array_keys($questions);
     <header class="app-header slim">
         <div>
             <h1 class="logo">퀴즈</h1>
+            <p class="subtitle">언어별 함수 설명을 보고 정답을 입력하세요.</p>
         </div>
         <div class="user-meta">
-            <a class="primary nav-button" href="/main.php">Main</a>
+            <span><?= h($sessionUser['username'] ?? '') ?> · 레벨 <?= h((string) ($sessionUser['level'] ?? 0)) ?></span>
+            <a class="text-button" href="/main.php">메인</a>
         </div>
     </header>
 
@@ -48,8 +49,8 @@ $quizLanguages = array_keys($questions);
             </div>
             <p class="form-error hidden" id="quiz-language-error">언어를 하나 이상 선택해야 합니다.</p>
             <div class="action-row">
+                <a class="secondary-link" href="/main.php">나가기</a>
                 <button type="button" class="primary" id="quiz-start">게임 시작</button>
-                <button type="button" class="ghost-button" onclick="window.location.href='/main.php'">나가기</button>
             </div>
         </section>
 

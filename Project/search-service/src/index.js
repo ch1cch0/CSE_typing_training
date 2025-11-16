@@ -1,7 +1,7 @@
 // Express.js 기반[Node.js의 대표적인 웹 프레임워크]의 간단한 REST API
 // 사용자가 보낸 검색어로 위키백과에 요청 -> 결과 가공후 json 형태로 변환
 import express from 'express';
-import fetch from 'node-fetch'; 
+import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

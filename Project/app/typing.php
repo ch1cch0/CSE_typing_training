@@ -1,5 +1,4 @@
 <?php
-// [화면 3.1: 타자연습]
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
@@ -28,9 +27,11 @@ $sentences = get_typing_sentences_indexed();
     <header class="app-header slim">
         <div>
             <h1 class="logo">타자연습</h1>
+            <p class="subtitle">언어를 선택해 20개의 문장을 따라 쳐보세요.</p>
         </div>
         <div class="user-meta">
-            <a class="primary nav-button" href="/main.php">Main</a>
+            <span><?= h($sessionUser['username'] ?? '') ?> · 레벨 <?= h((string) ($sessionUser['level'] ?? 0)) ?></span>
+            <a class="text-button" href="/main.php">메인</a>
         </div>
     </header>
 
@@ -48,8 +49,8 @@ $sentences = get_typing_sentences_indexed();
             </div>
             <p class="form-error hidden" id="typing-language-error">언어를 하나 이상 선택해야 합니다.</p>
             <div class="action-row">
+                <a class="secondary-link" href="/main.php">나가기</a>
                 <button type="button" class="primary" id="typing-start">게임 시작</button>
-                <button type="button" class="ghost-button" onclick="window.location.href='/main.php'">나가기</button>
             </div>
         </section>
 

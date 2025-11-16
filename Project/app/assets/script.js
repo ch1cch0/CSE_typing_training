@@ -1,4 +1,4 @@
-// 핵심 Client Logic 전체를 담당
+// 핵심 Client Logic을 담당하는 js 파일
 const SECTION_HIDDEN_CLASS = 'hidden';
 
 // 페이지 로딩 시 초기화
@@ -22,6 +22,7 @@ function initTyping() {
         game: document.querySelector('#typing-app [data-section="game"]'),
         summary: document.querySelector('#typing-app [data-section="summary"]'),
     };
+    const languageContainer = document.getElementById('typing-languages');
     const startButton = document.getElementById('typing-start');
     const restartButton = document.getElementById('typing-restart');
     const exitButton = document.getElementById('typing-exit');
@@ -42,13 +43,9 @@ function initTyping() {
 
     let rounds = [];
     let index = 0;
+    let typedChars = 0;
     let bestSpeed = 0;
     let startedAt = 0;
-    let sentenceStart = 0;
-    let currentSentenceLength = 0;
-    let lastSentenceSpeed = 0;
-    let speedSum = 0;
-    let speedCount = 0;
 
     // 섹션(선택/게임/결과) 표시 <= CSS의 .hidden 클래스 toggle
     const showSection = (name) => {
@@ -64,13 +61,9 @@ function initTyping() {
     const resetGame = () => {
         rounds = [];
         index = 0;
+        typedChars = 0;
         bestSpeed = 0;
         startedAt = 0;
-        sentenceStart = 0;
-        currentSentenceLength = 0;
-        lastSentenceSpeed = 0;
-        speedSum = 0;
-        speedCount = 0;
         input.value = '';
         input.classList.remove('error');
         inputError?.classList.add(SECTION_HIDDEN_CLASS);
@@ -81,7 +74,12 @@ function initTyping() {
     const updateStats = () => {
         const completed = index;
         const total = rounds.length || TARGET_SENTENCES;
-        currentEl.textContent = lastSentenceSpeed.toString();
+        const elapsedMinutes = startedAt ? Math.max((Date.now() - startedAt) / 60000, 0.01) : 1;
+        const currentSpeed = startedAt
+            ? Math.max(1, Math.round((typedChars / 5) / elapsedMinutes))
+            : 0;
+
+        currentEl.textContent = currentSpeed.toString();
         bestEl.textContent = bestSpeed.toString();
         progressEl.textContent = `${completed}/${total}`;
         counterEl.textContent = `${completed}/${total} 문장 완료`;
@@ -99,24 +97,17 @@ function initTyping() {
         progressEl.textContent = `${index}/${rounds.length}`;
         input.value = '';
         input.focus();
-        currentSentenceLength = current.sentence.length;
-        sentenceStart = Date.now();
     };
 
     const handleSuccess = () => {
         const current = rounds[index];
+        typedChars += current.sentence.length;
         index += 1;
 
         // 입력문장 타수 계산, 최고속도(bestSpeed) 업데이트, 총합 speedSum 누적
-        const elapsedMinutes = Math.max((Date.now() - sentenceStart) / 60000, 0.01);
-        const sentenceSpeed = Math.max(
-            1,
-            Math.round((currentSentenceLength / 5) / elapsedMinutes)
-        );
-        lastSentenceSpeed = sentenceSpeed;
-        bestSpeed = Math.max(bestSpeed, sentenceSpeed);
-        speedSum += sentenceSpeed;
-        speedCount += 1;
+        const elapsedMinutes = Math.max((Date.now() - startedAt) / 60000, 0.01);
+        const currentSpeed = Math.max(1, Math.round((typedChars / 5) / elapsedMinutes));
+        bestSpeed = Math.max(bestSpeed, currentSpeed);
 
         // api/update_score.php 로 점수 전송
         updateStats();
@@ -124,22 +115,27 @@ function initTyping() {
             type: 'typing',
             typedSentences: 1,
             bestSpeed,
-        });
+        }); // 범수 씨 추가 부분
 
         // 다음 문장 or 종료
         if (index >= rounds.length) {
-            finishGame();
+            finishGame(currentSpeed);
         } else {
             showSentence();
         }
     };
 
     // 게임 종료
-    const finishGame = () => {
-        const averageSpeed = speedCount ? Math.round(speedSum / speedCount) : 0;
+    const finishGame = (averageSpeed) => {
         summaryAvg.textContent = averageSpeed.toString();
         summaryBest.textContent = bestSpeed.toString();
         showSection('summary');
+        submitProgress('/api/update_score.php', {
+            type: 'typing',
+            typedCount: typedChars,
+            bestSpeed,
+            attempted: rounds.length,
+        });
     };
 
     // 선택된 언어 목록으로 문장 pool 생성 (랜덤 선택)
@@ -154,18 +150,15 @@ function initTyping() {
         if (!pool.length) {
             languageError.textContent = '선택한 언어의 문장이 없습니다.';
             languageError.classList.remove(SECTION_HIDDEN_CLASS);
+            languageContainer?.classList.add('error');
             return;
         }
 
         rounds = shuffle(pool).slice(0, Math.min(TARGET_SENTENCES, pool.length));
         index = 0;
+        typedChars = 0;
         bestSpeed = 0;
         startedAt = Date.now();
-        sentenceStart = 0;
-        currentSentenceLength = 0;
-        lastSentenceSpeed = 0;
-        speedSum = 0;
-        speedCount = 0;
         languageError.classList.add(SECTION_HIDDEN_CLASS);
         showSection('game');
         showSentence();
@@ -180,19 +173,24 @@ function initTyping() {
         if (!checked.length) {
             languageError.textContent = '언어를 하나 이상 선택해야 합니다.';
             languageError.classList.remove(SECTION_HIDDEN_CLASS);
+            languageContainer?.classList.add('error');
             return;
         }
+
+        languageContainer?.classList.remove('error');
         resetGame();
         startGame(checked);
     });
 
     restartButton?.addEventListener('click', () => {
         showSection('select');
+        languageContainer?.classList.remove('error');
     });
 
     exitButton?.addEventListener('click', () => {
         resetGame();
         showSection('select');
+        languageContainer?.classList.remove('error');
     });
 
     input?.addEventListener('keydown', (event) => {
@@ -216,6 +214,7 @@ function initTyping() {
     showSection('select');
 }
 
+
 // 퀴즈 페이지 전용 로직
 function initQuiz() {
     if (!document.body.matches('[data-page="quiz"]')) {
@@ -229,6 +228,7 @@ function initQuiz() {
         game: document.querySelector('#quiz-app [data-section="game"]'),
         summary: document.querySelector('#quiz-app [data-section="summary"]'),
     };
+    const languageContainer = document.getElementById('quiz-languages');
 
     const languageError = document.getElementById('quiz-language-error');
     const startButton = document.getElementById('quiz-start');
@@ -295,6 +295,11 @@ function initQuiz() {
         summaryCorrect.textContent = correct.toString();
         summaryWrong.textContent = wrong.toString();
         showSection('summary');
+        submitProgress('/api/update_score.php', {
+            type: 'quiz',
+            attempted: rounds.length,
+            correct,
+        });
     };
 
     const proceed = () => {
@@ -331,13 +336,10 @@ function initQuiz() {
         if (value.toLowerCase() === current.keyword.toLowerCase()) {
             correct += 1;
             showFeedback('정답입니다!', false);
-            submitProgress('/api/update_score.php', {
-                type: 'quiz',
-                correctAnswers: 1,
-            });
             pendingTimeout = window.setTimeout(() => {
                 input.removeAttribute('disabled');
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
+                pendingTimeout = null; // evaluateAnswer() 함수가 호출 안 돼서
                 proceed();
             }, 500);
         } else {
@@ -346,6 +348,7 @@ function initQuiz() {
             pendingTimeout = window.setTimeout(() => {
                 input.removeAttribute('disabled');
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
+                pendingTimeout = null; // 
                 proceed();
             }, 800);
         }
@@ -366,6 +369,7 @@ function initQuiz() {
         if (!pool.length) {
             languageError.textContent = '선택한 언어의 문제가 없습니다.';
             languageError.classList.remove(SECTION_HIDDEN_CLASS);
+            languageContainer?.classList.add('error');
             return;
         }
 
@@ -387,8 +391,11 @@ function initQuiz() {
         if (!checked.length) {
             languageError.textContent = '언어를 하나 이상 선택해야 합니다.';
             languageError.classList.remove(SECTION_HIDDEN_CLASS);
+            languageContainer?.classList.add('error');
             return;
         }
+
+        languageContainer?.classList.remove('error');
         resetGame();
         startGame(checked);
     });
@@ -396,7 +403,7 @@ function initQuiz() {
     restartButton?.addEventListener('click', () => {
         resetGame();
         showSection('select');
-        languageError.classList.add(SECTION_HIDDEN_CLASS);
+        languageContainer?.classList.remove('error');
     });
 
     exitButton?.addEventListener('click', () => {
@@ -405,7 +412,7 @@ function initQuiz() {
         }
         resetGame();
         showSection('select');
-        languageError.classList.add(SECTION_HIDDEN_CLASS);
+        languageContainer?.classList.remove('error');
     });
 
     input?.addEventListener('keydown', (event) => {
@@ -421,7 +428,6 @@ function initQuiz() {
     showSection('select');
 }
 
-// 검색 페이지 전용 로직
 function initSearch() {
     if (!document.body.matches('[data-page="search"]')) {
         return;
@@ -505,5 +511,7 @@ function submitProgress(url, payload) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         credentials: 'same-origin',
-    }).catch(() => {});
+    }).catch(() => {
+        // intentionally swallow errors; progress can be retried later
+    });
 }

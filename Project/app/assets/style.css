@@ -1,4 +1,3 @@
-/* 둥근모꼴 폰트 사용: 2D 게임 효과 */
 @font-face {
     font-family: 'RoundedFixedsys';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
@@ -30,13 +29,6 @@ body {
     color: var(--text);
 }
 
-button,
-input,
-select,
-textarea {
-    font-family: inherit;
-}
-
 a {
     color: inherit;
     text-decoration: none;
@@ -66,22 +58,16 @@ a {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.app-header.slim {
+    padding-bottom: 1.5rem;
+}
+
 .user-meta {
     text-align: right;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    font-size: 1rem;
-    align-items: flex-end;
-}
-
-.user-meta .primary.nav-button {
-    font-size: 1.2rem;
-}
-
-
-.user-meta form {
-    margin: 0;
+    font-size: 0.9rem;
 }
 
 .text-button {
@@ -90,57 +76,23 @@ a {
     color: var(--primary-light);
 }
 
-.dashboard {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 1.5rem;
-    padding: 2rem clamp(1rem, 5vw, 4rem) 3rem;
-}
-
-.profile-card {
-    flex: 2 1 360px;
-    background: var(--surface);
-    border-radius: 1.5rem;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.profile-header h2 {
-    margin: 0;
-    font-size: 2rem;
-}
-
-.profile-subtitle {
-    margin: 0.25rem 0 0;
-    color: var(--muted);
-}
-
-.profile-metrics {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.profile-row {
+.stats {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1rem;
+    padding: 2rem clamp(1rem, 5vw, 4rem);
 }
 
-.profile-metrics article {
-    flex: 1 1 160px;
-    background: var(--surface-alt);
+.stats article {
+    background: var(--surface);
     border-radius: 1rem;
-    padding: 1.25rem;
+    padding: 1.5rem;
 }
 
-.profile-metrics span {
-    display: block;
+.stats h2 {
+    margin: 0;
+    font-size: 0.95rem;
     color: var(--muted);
-    font-size: 0.9rem;
 }
 
 .metric {
@@ -149,41 +101,33 @@ a {
     font-weight: bold;
 }
 
-.metric.large {
-    font-size: 2.5rem;
-}
-
 .metric.highlight {
     color: #ff7676;
 }
 
-.menu-list {
-    flex: 1 1 260px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    padding: 0 clamp(1rem, 5vw, 4rem) 3rem;
 }
 
 .menu-card {
     background: var(--surface);
     border-radius: 1rem;
     padding: 2rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: 1px solid transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
 }
 
 .menu-card:hover {
     transform: translateY(-4px);
     border-color: var(--primary);
-    box-shadow: 0 10px 30px rgba(100, 50, 150, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .menu-card h3 {
-    margin: 0;
+    margin: 0 0 0.5rem;
 }
 
 .menu-card p {
@@ -251,10 +195,6 @@ input[type="password"]:focus {
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
 }
 
 .primary:hover {
@@ -278,27 +218,6 @@ input[type="password"]:focus {
     font-size: 0.9rem;
 }
 
-.ghost-button {
-    background: var(--surface);
-    border: 1px solid var(--surface);
-    color: var(--muted);
-    border-radius: 999px;
-    padding: 0.85rem 2rem;
-    font-size: 1rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    appearance: none;
-    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.ghost-button:hover {
-    border-color: var(--primary);
-    color: var(--text);
-    background: var(--surface-alt);
-}
-
 .form-error {
     color: var(--error);
     font-size: 0.85rem;
@@ -307,42 +226,6 @@ input[type="password"]:focus {
 
 .form-error.error {
     font-weight: 600;
-}
-
-.logout-button {
-    background: var(--surface);
-    border: 1px solid var(--surface);
-    color: var(--muted);
-    padding: 0.6rem 1.5rem;
-    font-size: 1.2rem;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.nav-button {
-    background: var(--surface);
-    border: 1px solid var(--surface);
-    color: var(--muted);
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.logout-button:hover,
-.nav-button:hover {
-    border-color: var(--primary);
-    background: var(--surface-alt);
-    color: var(--text);
-    box-shadow: 0 3px 15px rgba(100, 50, 150, 0.35);
 }
 
 .hidden {
@@ -364,9 +247,13 @@ input[type="password"]:focus {
     flex-wrap: wrap;
     gap: 0.75rem;
     margin: 1rem 0;
+    border: 1px solid transparent;
     border-radius: 1rem;
     padding: 0.25rem;
-    justify-content: center;
+}
+
+.chip-list.error {
+    border-color: var(--error);
 }
 
 .chip {
@@ -378,26 +265,20 @@ input[type="password"]:focus {
 }
 
 .chip span {
-    background: rgba(255, 255, 255, 0.05);  
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: var(--text);
-    backdrop-filter: blur(4px);
-    padding: 0.45rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.9rem;
     border-radius: 999px;
-    font-size: 0.9rem;
+    border: 1px solid transparent;
+    background: var(--surface);
+    color: var(--muted);
+    transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .chip input:checked + span {
     border-color: var(--primary);
     color: var(--text);
-}
-
-.chip:hover span {
-    border-color: var(--primary); 
-    color: var(--text);
-    background: var(--surface-alt);
-    transition: 0.2s;
-    box-shadow: 0 3px 15px rgba(100, 50, 150, 0.35);
 }
 
 .game-stats {
@@ -408,7 +289,7 @@ input[type="password"]:focus {
 }
 
 .game-stats div {
-    background: var(--bg);
+    background: var(--surface);
     padding: 1rem;
     border-radius: 1rem;
     text-align: center;
@@ -469,11 +350,6 @@ input[type="password"]:focus {
     flex: none;
 }
 
-.action-row .primary,
-.action-row .ghost-button {
-    padding: 0.72rem 1.7rem;
-}
-
 .search-bar {
     display: flex;
     gap: 0.75rem;
@@ -509,8 +385,13 @@ input[type="password"]:focus {
 }
 
 @media (max-width: 600px) {
-    .app-header {
+    .app-header,
+    .stats,
+    .menu-grid {
         padding: 1.25rem;
+    }
+
+    .app-header {
         flex-direction: column;
         gap: 1rem;
     }
@@ -518,19 +399,6 @@ input[type="password"]:focus {
     .user-meta {
         align-items: flex-start;
         text-align: left;
-    }
-
-    .dashboard {
-        padding: 1.25rem;
-        flex-direction: column;
-    }
-
-    .profile-row {
-        grid-template-columns: 1fr;
-    }
-
-    .menu-list {
-        width: 100%;
     }
 
     .action-row {
@@ -542,50 +410,4 @@ input[type="password"]:focus {
         width: 100%;
         text-align: center;
     }
-}
-
-#quiz-app,
-#typing-app {
-    width: 100%;
-    max-height: 80%;
-    max-width: 70%;
-    padding: 3.5rem 4rem;
-    margin: 4rem auto; 
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-#quiz-app [data-section],
-#typing-app [data-section] {
-    background: var(--surface);
-    border-radius: 1.5rem;
-    padding: 2rem 2.5rem;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-    margin-bottom: 2rem;
-}
-
-#quiz-app [data-section="select"],
-#typing-app [data-section="select"] {
-    background: var(--surface);
-    padding: 4rem 5rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-    text-align: center;
-    min-height: 45vh;
-}
-
-#quiz-app [data-section="select"] p,
-#typing-app [data-section="select"] p {
-    margin-bottom: 2.5rem;  
-}
-
-#quiz-app .chip-list,
-#typing-app .chip-list {
-    margin-bottom: 2.5rem;  
-}
-
-#quiz-app section[data-section="select"] .action-row,
-#typing-app section[data-section="select"] .action-row {
-    margin-top: 2rem;
-    justify-content: center;
 }

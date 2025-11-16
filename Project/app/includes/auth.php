@@ -7,9 +7,10 @@
 
 // 타입 자동 변환 막아줌 [안전성]
 declare(strict_types=1);
+
 // 시간 한국 기준으로 설정
 date_default_timezone_set('Asia/Seoul');
-// 공용 함수 
+
 require_once __DIR__ . '/functions.php';
 
 // 세션 중복 호출 방지
@@ -17,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 로그인 처리
+// 로그인
 function login_user(string $username, string $password): bool
 {
     $name = trim($username);
@@ -39,7 +40,7 @@ function login_user(string $username, string $password): bool
     return true;
 }
 
-// 회원가입처리
+// 회원가입
 function register_user(string $username, string $password, array &$errors = []): bool
 {
     $errors = [];
@@ -99,7 +100,7 @@ function set_session_user(array $user): void
     session_regenerate_id(true);
 }
 
-// 현재 로그인된 유저 정보 가져오는 함수
+// 현재 로그인된 유저 정보
 function current_user(): ?array
 {
     /** @var array<string, mixed>|null $user */

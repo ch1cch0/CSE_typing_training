@@ -14,7 +14,7 @@ function h(?string $value): string
     return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-// 유저 프로필 가져오기
+// 유저 프로필
 function fetch_user_profile(int $userId): ?array
 {
     $pdo = get_db();
@@ -86,10 +86,10 @@ function get_quiz_questions_indexed(): array
 }
 
 // 타자 진행도 업데이트
-// logic: 
-function update_typing_progress(int $userId, int $sentencesCompleted, int $bestSpeed): ?array
+// logic: 타자 진행도 + 최고 기록 갱신 + 유저 레벨 갱신 함수 호출
+function update_typing_progress(int $userId, int $typedCount, int $bestSpeed): ?array
 {
-    $typed = max(0, $sentencesCompleted);
+    $typed = max(0, $typedCount);
     $speed = max(0, $bestSpeed);
 
     $pdo = get_db();
@@ -113,18 +113,18 @@ function update_typing_progress(int $userId, int $sentencesCompleted, int $bestS
 
 // 퀴즈 진행도 업데이트
 // logic: 퀴즈 1문제 맞추면 total_quiz += 1
-function update_quiz_progress(int $userId, int $correctAnswers): ?array
+function update_quiz_progress(int $userId, int $attemptedQuestions): ?array
 {
-    $correct = max(0, $correctAnswers);
+    $attempted = max(0, $attemptedQuestions);
     $pdo = get_db();
 
     $stmt = $pdo->prepare(
         'UPDATE users
-         SET total_quiz = total_quiz + :correct
+         SET total_quiz = total_quiz + :attempted
          WHERE id = :id'
     );
     $stmt->execute([
-        'correct' => $correct,
+        'attempted' => $attempted,
         'id' => $userId,
     ]);
 
