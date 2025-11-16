@@ -1,4 +1,5 @@
 <?php
+// [화면 3.3: 검색 기능]
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
@@ -18,12 +19,10 @@ $sessionUser = current_user();
 <body class="page-activity" data-page="search">
     <header class="app-header slim">
         <div>
-            <h1 class="logo">Search Anything</h1>
-            <p class="subtitle">궁금한 내용을 위키에서 찾아보세요.</p>
+            <h1 class="logo">위키검색</h1>
         </div>
         <div class="user-meta">
-            <span><?= h($sessionUser['username'] ?? '') ?></span>
-            <a class="text-button" href="/main.php">메인</a>
+            <a class="primary nav-button" href="/main.php">Main</a>
         </div>
     </header>
 
