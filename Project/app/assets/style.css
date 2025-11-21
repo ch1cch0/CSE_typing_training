@@ -273,6 +273,13 @@ input[type="password"]:focus {
     cursor: pointer;
 }
 
+.secondary:hover {
+    border-color: var(--primary);
+    color: var(--text);
+    background: var(--surface-alt);
+    box-shadow: 0 3px 15px rgba(100, 50, 150, 0.35);
+}
+
 .secondary-link {
     color: var(--primary-light);
     display: inline-flex;
@@ -526,6 +533,39 @@ input[type="password"]:focus {
     margin: 0;
     color: var(--muted);
     line-height: 1.4;
+}
+
+#quiz-app [data-section="summary"],
+#typing-app [data-section="summary"] {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+#quiz-app [data-section="summary"] .action-row,
+#typing-app [data-section="summary"] .action-row {
+    justify-content: center;
+}
+
+#quiz-app [data-section="summary"] .secondary-link,
+#typing-app [data-section="summary"] .secondary-link {
+    margin-top: 0;
+    padding: 0.72rem 1.7rem;
+    border: 1px solid var(--muted);
+    border-radius: 999px;
+    color: var(--text);
+    background: transparent;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+#quiz-app [data-section="summary"] .secondary-link:hover,
+#typing-app [data-section="summary"] .secondary-link:hover {
+    border-color: var(--primary);
+    background: var(--surface-alt);
+    color: var(--text);
+    box-shadow: 0 3px 15px rgba(100, 50, 150, 0.35);
 }
 
 @media (max-width: 600px) {
