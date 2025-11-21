@@ -16,6 +16,7 @@
     --text: #f1f1f1;
     --muted: #999;
     --error: #ff6b6b;
+    --success: #4ade80;
 }
 
 * {
@@ -450,6 +451,11 @@ input[type="password"]:focus {
     -webkit-user-select: none;
 }
 
+.typing-mismatch {
+    text-decoration: underline;
+    text-decoration-color: var(--error);
+}
+
 .typing-card small {
     color: var(--muted);
 }
@@ -458,8 +464,17 @@ input[type="password"]:focus {
     width: 100%;
 }
 
+/* 정답 오답 색깔 효과 */
 .typing-card input.error {
     border-color: var(--error);
+    outline: 2px solid var(--error);
+    box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.35);
+}
+
+.typing-card input.success {
+    border-color: var(--success);
+    outline: 2px solid var(--success);
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.35);
 }
 
 .action-row {
