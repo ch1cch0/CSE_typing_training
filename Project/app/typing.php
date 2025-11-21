@@ -56,6 +56,10 @@ $sentences = get_typing_sentences_indexed();
         <section data-section="game" class="hidden">
             <div class="game-stats">
                 <div>
+                    <span>정확도</span>
+                    <p id="typing-accuracy">0 %</p>
+                </div>
+                <div>
                     <span>현재 타수</span>
                     <p id="typing-current">0</p>
                 </div>
@@ -84,6 +88,7 @@ $sentences = get_typing_sentences_indexed();
             <h2>Well Done!</h2>
             <p>평균 타수 <strong id="typing-summary-average">0</strong></p>
             <p>최고 타수 <strong id="typing-summary-best">0</strong></p>
+            <p>평균 정확도 <strong id="typing-summary-accuracy">0 %</strong></p>
             <div class="action-row">
                 <button type="button" class="primary" id="typing-restart">다시하기</button>
                 <a class="secondary-link" href="/main.php">메인화면</a>
