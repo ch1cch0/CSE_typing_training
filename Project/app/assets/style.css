@@ -464,6 +464,7 @@ input[type="password"]:focus {
     width: 100%;
 }
 
+/* 정답 오답 색깔 효과 */
 .typing-card input.error {
     border-color: var(--error);
     outline: 2px solid var(--error);
