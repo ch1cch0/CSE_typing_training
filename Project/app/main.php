@@ -30,6 +30,8 @@ if (!$sessionUser) {
 
 // 가입 날짜
 $joined = (new DateTime($sessionUser['created_at']))->format('Y-m-d H:i');
+$levelRanking = get_level_ranking(3);
+$speedRanking = get_speed_ranking(3);
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -54,8 +56,11 @@ $joined = (new DateTime($sessionUser['created_at']))->format('Y-m-d H:i');
     <main class="dashboard">
         <section class="profile-card">
             <div class="profile-header">
-                <h2>Hello, <?= h($sessionUser['username']) ?>!</h2>
-                <p class="profile-subtitle">가입일: <?= h($joined) ?></p>
+                <div class="profile-title">
+                    <h2>Hello, <?= h($sessionUser['username']) ?>!</h2>
+                    <p class="profile-subtitle">가입일: <?= h($joined) ?></p>
+                </div>
+                <button type="button" class="secondary ghost-button" id="open-ranking">랭킹 보기</button>
             </div>
             <div class="profile-metrics">
                 <div class="profile-row">
@@ -95,6 +100,50 @@ $joined = (new DateTime($sessionUser['created_at']))->format('Y-m-d H:i');
             </a>
         </section>
     </main>
+    <div class="ranking-overlay hidden" id="ranking-overlay" aria-hidden="true">
+        <div class="ranking-modal" role="dialog" aria-modal="true" aria-labelledby="ranking-title">
+            <div class="ranking-modal__header">
+                <h3 id="ranking-title">랭킹</h3>
+                <button type="button" class="icon-button" id="ranking-close" aria-label="랭킹 닫기">&times;</button>
+            </div>
+            <div class="ranking-columns">
+                <div class="ranking-group">
+                    <h4>레벨 Top 3</h4>
+                    <ol class="ranking-list">
+                        <?php if ($levelRanking): ?>
+                            <?php foreach ($levelRanking as $i => $row): ?>
+                                <?php $isMe = (int) $row['id'] === (int) $sessionUser['id']; ?>
+                                <li class="<?= $isMe ? 'is-me' : '' ?>">
+                                    <span class="rank-num"><?= $i + 1 ?></span>
+                                    <span class="rank-name"><?= h($row['username']) ?></span>
+                                    <span class="rank-score"><?= h((string) $row['level']) ?> 레벨</span>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li class="empty">랭킹 정보가 없습니다.</li>
+                        <?php endif; ?>
+                    </ol>
+                </div>
+                <div class="ranking-group">
+                    <h4>최고 타수 Top 3</h4>
+                    <ol class="ranking-list">
+                        <?php if ($speedRanking): ?>
+                            <?php foreach ($speedRanking as $i => $row): ?>
+                                <?php $isMe = (int) $row['id'] === (int) $sessionUser['id']; ?>
+                                <li class="<?= $isMe ? 'is-me' : '' ?>">
+                                    <span class="rank-num"><?= $i + 1 ?></span>
+                                    <span class="rank-name"><?= h($row['username']) ?></span>
+                                    <span class="rank-score"><?= h((string) $row['highest_speed']) ?> CPM</span>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li class="empty">랭킹 정보가 없습니다.</li>
+                        <?php endif; ?>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/assets/script.js" defer></script>
 </body>
 </html>

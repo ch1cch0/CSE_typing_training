@@ -134,13 +134,43 @@ function update_quiz_progress(int $userId, int $correctAnswers): ?array
 }
 
 // 레벨 재계산
-// logic: 타자 + 퀴즈 합 100 당 레벨 1 상승
+// logic: 타자 + 퀴즈 합 50 당 레벨 1 상승
 function recalculate_level(PDO $pdo, int $userId): void
 {
     $stmt = $pdo->prepare(
         'UPDATE users
-         SET level = FLOOR((total_typing + total_quiz) / 100)
+         SET level = FLOOR((total_typing + total_quiz) / 50)
          WHERE id = :id'
     );
     $stmt->execute(['id' => $userId]);
+}
+
+function get_level_ranking(int $limit = 3): array
+{
+    $pdo = get_db();
+    $stmt = $pdo->prepare(
+        'SELECT id, username, level, highest_speed
+         FROM users
+         ORDER BY level DESC, highest_speed DESC, id ASC
+         LIMIT :limit'
+    );
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll() ?: [];
+}
+
+function get_speed_ranking(int $limit = 3): array
+{
+    $pdo = get_db();
+    $stmt = $pdo->prepare(
+        'SELECT id, username, highest_speed, level
+         FROM users
+         ORDER BY highest_speed DESC, level DESC, id ASC
+         LIMIT :limit'
+    );
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll() ?: [];
 }

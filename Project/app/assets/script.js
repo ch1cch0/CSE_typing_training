@@ -3,10 +3,42 @@ const SECTION_HIDDEN_CLASS = 'hidden';
 
 // 페이지 로딩 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
+    initMain();
     initTyping();
     initQuiz();
     initSearch();
 });
+
+function initMain() {
+    if (!document.body.classList.contains('page-main')) {
+        return;
+    }
+
+    const openBtn = document.getElementById('open-ranking');
+    const closeBtn = document.getElementById('ranking-close');
+    const overlay = document.getElementById('ranking-overlay');
+
+    const setVisible = (show) => {
+        if (!overlay) {
+            return;
+        }
+        overlay.classList.toggle(SECTION_HIDDEN_CLASS, !show);
+        overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+    };
+
+    openBtn?.addEventListener('click', () => setVisible(true));
+    closeBtn?.addEventListener('click', () => setVisible(false));
+    overlay?.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+            setVisible(false);
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            setVisible(false);
+        }
+    });
+}
 
 // 타자 연습 페이지 전용 로직
 function initTyping() {
@@ -26,7 +58,6 @@ function initTyping() {
     const restartButton = document.getElementById('typing-restart');
     const exitButton = document.getElementById('typing-exit');
     const languageError = document.getElementById('typing-language-error');
-    const submitButton = document.getElementById('typing-submit');
     const input = document.getElementById('typing-input');
     const promptEl = document.getElementById('typing-prompt');
     const languageLabel = document.getElementById('typing-language-label');
@@ -48,11 +79,9 @@ function initTyping() {
     let rounds = [];
     let index = 0;
     let bestSpeed = 0;
-    let startedAt = 0;
     let sentenceStart = 0;
     let currentSentenceLength = 0;
     let currentPromptText = '';
-    let lastSentenceSpeed = 0;
     let speedSum = 0;
     let speedCount = 0;
     let weightedAccuracySum = 0;
