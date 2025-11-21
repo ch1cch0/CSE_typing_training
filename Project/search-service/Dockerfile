@@ -1,4 +1,4 @@
-# Node.js 기반 백엔드 API 서버용 Dockerfile
+# Node.js 기반 백엔드 API 서버용 Dockerfile.
 
 # 기초 이미지(Base Image) 지정
 # node:18-alpine: Node.js 18 버전을 포함한 Alpine Linux(아주 가벼운 리눅스) 이미지.
