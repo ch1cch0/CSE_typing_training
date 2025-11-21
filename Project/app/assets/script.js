@@ -26,7 +26,6 @@ function initTyping() {
     const restartButton = document.getElementById('typing-restart');
     const exitButton = document.getElementById('typing-exit');
     const languageError = document.getElementById('typing-language-error');
-    const submitButton = document.getElementById('typing-submit');
     const input = document.getElementById('typing-input');
     const promptEl = document.getElementById('typing-prompt');
     const languageLabel = document.getElementById('typing-language-label');
@@ -48,11 +47,9 @@ function initTyping() {
     let rounds = [];
     let index = 0;
     let bestSpeed = 0;
-    let startedAt = 0;
     let sentenceStart = 0;
     let currentSentenceLength = 0;
     let currentPromptText = '';
-    let lastSentenceSpeed = 0;
     let speedSum = 0;
     let speedCount = 0;
     let weightedAccuracySum = 0;
@@ -502,7 +499,7 @@ function initQuiz() {
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
                 pendingTimeout = null;
                 proceed();
-            }, 3000);
+            }, 2000);
         } else {
             wrong += 1;
             showFeedback(`오답입니다! 정답: ${current.keyword}`, true);
@@ -511,7 +508,7 @@ function initQuiz() {
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
                 pendingTimeout = null;
                 proceed();
-            }, 3000);
+            }, 2000);
         }
     };
 
