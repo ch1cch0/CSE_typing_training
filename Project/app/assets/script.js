@@ -39,6 +39,7 @@ function initTyping() {
 
     // 게임 한 판에 20문장
     const TARGET_SENTENCES = 20;
+    const CURRENT_SPEED_INTERVAL = 200;
 
     let rounds = [];
     let index = 0;
@@ -49,6 +50,7 @@ function initTyping() {
     let lastSentenceSpeed = 0;
     let speedSum = 0;
     let speedCount = 0;
+    let currentSpeedTimer = null;
 
     // 섹션(선택/게임/결과) 표시 <= CSS의 .hidden 클래스 toggle
     const showSection = (name) => {
@@ -62,6 +64,7 @@ function initTyping() {
 
     // 게임 데이터 초기화
     const resetGame = () => {
+        stopRealtimeSpeed();
         rounds = [];
         index = 0;
         bestSpeed = 0;
@@ -75,16 +78,47 @@ function initTyping() {
         input.classList.remove('error');
         inputError?.classList.add(SECTION_HIDDEN_CLASS);
         updateStats();
+        updateCurrentSpeed();
     };
 
     // 상태 갱신
     const updateStats = () => {
         const completed = index;
         const total = rounds.length || TARGET_SENTENCES;
-        currentEl.textContent = lastSentenceSpeed.toString();
         bestEl.textContent = bestSpeed.toString();
         progressEl.textContent = `${completed}/${total}`;
         counterEl.textContent = `${completed}/${total} 문장 완료`;
+    };
+
+    const updateCurrentSpeed = () => {
+        if (!currentEl || !input) {
+            return;
+        }
+        if (!sentenceStart) {
+            currentEl.textContent = '0';
+            return;
+        }
+        const elapsedMinutes = Math.max((Date.now() - sentenceStart) / 60000, 0.01);
+        const typedLength = input.value.length;
+        const currentSpeed = typedLength
+            ? Math.round(typedLength / elapsedMinutes)
+            : 0;
+        currentEl.textContent = currentSpeed.toString();
+    };
+
+    const startRealtimeSpeed = () => {
+        updateCurrentSpeed();
+        if (currentSpeedTimer) {
+            return;
+        }
+        currentSpeedTimer = window.setInterval(updateCurrentSpeed, CURRENT_SPEED_INTERVAL);
+    };
+
+    const stopRealtimeSpeed = () => {
+        if (currentSpeedTimer) {
+            window.clearInterval(currentSpeedTimer);
+            currentSpeedTimer = null;
+        }
     };
 
     // 현재 문장 화면에 출력
@@ -101,17 +135,18 @@ function initTyping() {
         input.focus();
         currentSentenceLength = current.sentence.length;
         sentenceStart = Date.now();
+        updateCurrentSpeed();
     };
 
     const handleSuccess = () => {
         const current = rounds[index];
         index += 1;
 
-        // 입력문장 타수 계산, 최고속도(bestSpeed) 업데이트, 총합 speedSum 누적
+        // 입력문장 타수(CPM) 계산, 최고속도(bestSpeed) 업데이트, 총합 speedSum 누적
         const elapsedMinutes = Math.max((Date.now() - sentenceStart) / 60000, 0.01);
         const sentenceSpeed = Math.max(
             1,
-            Math.round((currentSentenceLength / 5) / elapsedMinutes)
+            Math.round(currentSentenceLength / elapsedMinutes)
         );
         lastSentenceSpeed = sentenceSpeed;
         bestSpeed = Math.max(bestSpeed, sentenceSpeed);
@@ -136,6 +171,7 @@ function initTyping() {
 
     // 게임 종료
     const finishGame = () => {
+        stopRealtimeSpeed();
         const averageSpeed = speedCount ? Math.round(speedSum / speedCount) : 0;
         summaryAvg.textContent = averageSpeed.toString();
         summaryBest.textContent = bestSpeed.toString();
@@ -170,6 +206,7 @@ function initTyping() {
         showSection('game');
         showSentence();
         updateStats();
+        startRealtimeSpeed();
     };
 
     startButton?.addEventListener('click', () => {
