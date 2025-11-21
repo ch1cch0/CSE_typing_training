@@ -498,6 +498,7 @@ function initQuiz() {
             pendingTimeout = window.setTimeout(() => {
                 input.removeAttribute('disabled');
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
+                pendingTimeout = null;
                 proceed();
             }, 500);
         } else {
@@ -506,6 +507,7 @@ function initQuiz() {
             pendingTimeout = window.setTimeout(() => {
                 input.removeAttribute('disabled');
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
+                pendingTimeout = null;
                 proceed();
             }, 800);
         }
