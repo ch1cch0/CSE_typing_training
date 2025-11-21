@@ -37,6 +37,9 @@ services:
       TZ: Asia/Seoul
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # 데이터 영구저장: docker compose down 해도 안 사라지도록 
+      # 용량 너무 커질 경우 docker-compose down -v <= 데이터 다 사라짐 
+      - db-data:/var/lib/mysql
     # 컨테이너 상태 주기적 검사
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
@@ -50,3 +53,6 @@ services:
       context: ./search-service
     ports:
       - '8090:3000'
+
+volumes:
+  db-data:
