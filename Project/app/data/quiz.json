@@ -58,5 +58,65 @@
     "language": "Python",
     "keyword": "generator",
     "description": "Function that yields lazy sequences using the yield keyword."
+  },
+  {
+    "language": "C++",
+    "keyword": "lambda",
+    "description": "Inline function object created with [] capture syntax."
+  },
+  {
+    "language": "Java",
+    "keyword": "lambda",
+    "description": "Concise anonymous function introduced in Java 8."
+  },
+  {
+    "language": "Python",
+    "keyword": "decorator",
+    "description": "Function that wraps another function to modify behavior."
+  },
+  {
+    "language": "C++",
+    "keyword": "std::forward",
+    "description": "Perfect-forwarding utility to preserve value category for function arguments."
+  },
+  {
+    "language": "C++",
+    "keyword": "unique_ptr",
+    "description": "Move-only smart pointer owning a single object with deterministic release."
+  },
+  {
+    "language": "C++",
+    "keyword": "RAII",
+    "description": "Resource Acquisition Is Initialization: manage resources via object lifetime."
+  },
+  {
+    "language": "Java",
+    "keyword": "try-with-resources",
+    "description": "Automatic resource management using try(...) to close resources."
+  },
+  {
+    "language": "Java",
+    "keyword": "CompletableFuture",
+    "description": "Asynchronous computation stage supporting chaining and composition."
+  },
+  {
+    "language": "Java",
+    "keyword": "Garbage Collector",
+    "description": "JVM component that automatically reclaims unused objects."
+  },
+  {
+    "language": "Python",
+    "keyword": "virtualenv",
+    "description": "Isolated Python environment with its own interpreter and packages."
+  },
+  {
+    "language": "Python",
+    "keyword": "type hint",
+    "description": "Static-friendly annotations that declare expected types of values."
+  },
+  {
+    "language": "Python",
+    "keyword": "list slicing",
+    "description": "Syntax to take sublists via start:stop:step on sequences."
   }
 ]
