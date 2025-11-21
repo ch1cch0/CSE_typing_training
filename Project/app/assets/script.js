@@ -534,7 +534,7 @@ function initQuiz() {
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
                 pendingTimeout = null;
                 proceed();
-            }, 3000);
+            }, 2000);
         } else {
             wrong += 1;
             showFeedback(`오답입니다! 정답: ${current.keyword}`, true);
@@ -543,7 +543,7 @@ function initQuiz() {
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
                 pendingTimeout = null;
                 proceed();
-            }, 3000);
+            }, 2000);
         }
     };
 
