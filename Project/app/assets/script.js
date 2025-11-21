@@ -36,6 +36,7 @@ function initTyping() {
     const inputError = document.getElementById('typing-input-error');
     const summaryAvg = document.getElementById('typing-summary-average');
     const summaryBest = document.getElementById('typing-summary-best');
+    const defaultInputErrorText = inputError ? inputError.textContent : '';
 
     // 게임 한 판에 20문장
     const TARGET_SENTENCES = 20;
@@ -178,6 +179,26 @@ function initTyping() {
         showSection('summary');
     };
 
+    // 복붙 시도하면 에러발생
+    const showClipboardBlocked = () => {
+        if (!input || !inputError) {
+            return;
+        }
+        input.classList.add('error');
+        inputError.textContent = '어허! 붙여넣을 수 없습니다.';
+        inputError.classList.remove(SECTION_HIDDEN_CLASS);
+        window.setTimeout(() => {
+            input.classList.remove('error');
+            inputError.textContent = defaultInputErrorText;
+            inputError.classList.add(SECTION_HIDDEN_CLASS);
+        }, 1500);
+    };
+
+    const blockClipboardEvents = (event) => {
+        event.preventDefault();
+        showClipboardBlocked();
+    };
+
     // 선택된 언어 목록으로 문장 pool 생성 (랜덤 선택)
     const startGame = (selectedLanguages) => {
         const pool = [];
@@ -231,6 +252,9 @@ function initTyping() {
         resetGame();
         showSection('select');
     });
+
+    input?.addEventListener('paste', blockClipboardEvents);
+    input?.addEventListener('drop', blockClipboardEvents);
 
     input?.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -379,7 +403,7 @@ function initQuiz() {
             }, 500);
         } else {
             wrong += 1;
-            showFeedback(`오답! 정답: ${current.keyword}`, true);
+            showFeedback(`오답입니다! 정답: ${current.keyword}`, true);
             pendingTimeout = window.setTimeout(() => {
                 input.removeAttribute('disabled');
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);

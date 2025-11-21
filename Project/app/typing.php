@@ -16,6 +16,7 @@ if ($sessionUser) {
 $languages = get_languages();
 $sentences = get_typing_sentences_indexed();
 ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>

@@ -222,6 +222,8 @@ a {
     text-align: left;
 }
 
+/* 비밀번호 확인 가능하게 */
+
 .form span {
     font-size: 0.85rem;
     color: var(--muted);
@@ -443,6 +445,9 @@ input[type="password"]:focus {
     font-size: 1.2rem;
     line-height: 1.5;
     margin: 0;
+    /*드래그 못하게 막기*/
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .typing-card small {
