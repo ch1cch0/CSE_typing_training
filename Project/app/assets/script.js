@@ -33,10 +33,12 @@ function initTyping() {
     const currentEl = document.getElementById('typing-current');
     const bestEl = document.getElementById('typing-best');
     const progressEl = document.getElementById('typing-progress');
+    const accuracyEl = document.getElementById('typing-accuracy');
     const inputError = document.getElementById('typing-input-error');
     const summaryAvg = document.getElementById('typing-summary-average');
     const summaryBest = document.getElementById('typing-summary-best');
     const defaultInputErrorText = inputError ? inputError.textContent : '';
+    const summaryAccuracy = document.getElementById('typing-summary-accuracy');
 
     // 게임 한 판에 20문장
     const TARGET_SENTENCES = 20;
@@ -48,9 +50,11 @@ function initTyping() {
     let startedAt = 0;
     let sentenceStart = 0;
     let currentSentenceLength = 0;
+    let currentPromptText = '';
     let lastSentenceSpeed = 0;
     let speedSum = 0;
     let speedCount = 0;
+    let weightedAccuracySum = 0;
     let currentSpeedTimer = null;
 
     // 섹션(선택/게임/결과) 표시 <= CSS의 .hidden 클래스 toggle
@@ -61,6 +65,47 @@ function initTyping() {
             }
             section.classList.toggle(SECTION_HIDDEN_CLASS, key !== name);
         });
+    };
+
+    const clearInputState = () => {
+        input.classList.remove('error', 'success');
+        inputError?.classList.add(SECTION_HIDDEN_CLASS);
+    };
+
+    const applyInputFeedback = (isCorrect) => {
+        input.classList.toggle('success', isCorrect);
+        input.classList.toggle('error', !isCorrect);
+        // 에러 메시지는 표시하지 않고 숨긴 상태를 유지
+        inputError?.classList.add(SECTION_HIDDEN_CLASS);
+    };
+
+    const escapeHtml = (value) => value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const renderPromptHighlight = (typedValue) => {
+        if (!promptEl) {
+            return;
+        }
+        if (!typedValue) {
+            promptEl.textContent = currentPromptText;
+            return;
+        }
+        let html = '';
+        const typedLength = typedValue.length;
+        for (let i = 0; i < currentPromptText.length; i += 1) {
+            const ch = currentPromptText[i];
+            const isMismatch = i < typedLength && typedValue[i] !== ch;
+            if (isMismatch) {
+                html += `<span class="typing-mismatch">${escapeHtml(ch)}</span>`;
+            } else {
+                html += escapeHtml(ch);
+            }
+        }
+        promptEl.innerHTML = html;
     };
 
     // 게임 데이터 초기화
@@ -75,9 +120,9 @@ function initTyping() {
         lastSentenceSpeed = 0;
         speedSum = 0;
         speedCount = 0;
+        weightedAccuracySum = 0;
         input.value = '';
-        input.classList.remove('error');
-        inputError?.classList.add(SECTION_HIDDEN_CLASS);
+        clearInputState();
         updateStats();
         updateCurrentSpeed();
     };
@@ -91,20 +136,42 @@ function initTyping() {
         counterEl.textContent = `${completed}/${total} 문장 완료`;
     };
 
+    const countCorrectChars = (typed, target) => {
+        const limit = Math.min(typed.length, target.length);
+        let count = 0;
+        for (let i = 0; i < limit; i += 1) {
+            if (typed[i] === target[i]) {
+                count += 1;
+            }
+        }
+        return count;
+    };
+
     const updateCurrentSpeed = () => {
         if (!currentEl || !input) {
             return;
         }
-        if (!sentenceStart) {
+        const currentRound = rounds[index];
+        if (!sentenceStart || !currentRound) {
             currentEl.textContent = '0';
+            if (accuracyEl) {
+                accuracyEl.textContent = '0 %';
+            }
             return;
         }
         const elapsedMinutes = Math.max((Date.now() - sentenceStart) / 60000, 0.01);
-        const typedLength = input.value.length;
-        const currentSpeed = typedLength
-            ? Math.round(typedLength / elapsedMinutes)
+        const typed = input.value;
+        const typedLength = typed.length;
+        const correctChars = countCorrectChars(typed, currentRound.sentence);
+        const accuracy = typedLength ? Math.round((correctChars / typedLength) * 100) : 0;
+        const currentSpeed = correctChars
+            ? Math.round(correctChars / elapsedMinutes)
             : 0;
         currentEl.textContent = currentSpeed.toString();
+        if (accuracyEl) {
+            accuracyEl.textContent = `${accuracy} %`;
+        }
+        renderPromptHighlight(typed);
     };
 
     const startRealtimeSpeed = () => {
@@ -130,6 +197,7 @@ function initTyping() {
         }
         languageLabel.textContent = current.language;
         promptEl.textContent = current.sentence;
+        currentPromptText = current.sentence;
         counterEl.textContent = `${index}/${rounds.length}`;
         progressEl.textContent = `${index}/${rounds.length}`;
         input.value = '';
@@ -137,22 +205,42 @@ function initTyping() {
         currentSentenceLength = current.sentence.length;
         sentenceStart = Date.now();
         updateCurrentSpeed();
+        startRealtimeSpeed();
+        if (accuracyEl) {
+            accuracyEl.textContent = '0 %';
+        }
     };
 
-    const handleSuccess = () => {
+    const handleAdvance = (isCorrect = false) => {
         const current = rounds[index];
+        if (!current) {
+            return;
+        }
+        stopRealtimeSpeed();
+        const typed = input.value;
+        const typedLength = typed.length;
         index += 1;
 
         // 입력문장 타수(CPM) 계산, 최고속도(bestSpeed) 업데이트, 총합 speedSum 누적
         const elapsedMinutes = Math.max((Date.now() - sentenceStart) / 60000, 0.01);
+        const correctChars = countCorrectChars(typed, current.sentence);
+        const effectiveLength = Math.max(correctChars, 1);
         const sentenceSpeed = Math.max(
             1,
-            Math.round(currentSentenceLength / elapsedMinutes)
+            Math.round(effectiveLength / elapsedMinutes)
         );
         lastSentenceSpeed = sentenceSpeed;
-        bestSpeed = Math.max(bestSpeed, sentenceSpeed);
+        if (isCorrect) {
+            bestSpeed = Math.max(bestSpeed, sentenceSpeed);
+        }
         speedSum += sentenceSpeed;
         speedCount += 1;
+        const sentenceAccuracy = typedLength ? correctChars / typedLength : 0;
+        const lengthRatio = currentSentenceLength
+            ? Math.min(typedLength / currentSentenceLength, 1)
+            : 0;
+        const weightedAccuracy = sentenceAccuracy * lengthRatio;
+        weightedAccuracySum += weightedAccuracy;
 
         // api/update_score.php 로 점수 전송
         updateStats();
@@ -174,8 +262,14 @@ function initTyping() {
     const finishGame = () => {
         stopRealtimeSpeed();
         const averageSpeed = speedCount ? Math.round(speedSum / speedCount) : 0;
+        const averageAccuracy = speedCount
+            ? Math.round((weightedAccuracySum / speedCount) * 100)
+            : 0;
         summaryAvg.textContent = averageSpeed.toString();
         summaryBest.textContent = bestSpeed.toString();
+        if (summaryAccuracy) {
+            summaryAccuracy.textContent = `${averageAccuracy} %`;
+        }
         showSection('summary');
     };
 
@@ -223,6 +317,7 @@ function initTyping() {
         lastSentenceSpeed = 0;
         speedSum = 0;
         speedCount = 0;
+        weightedAccuracySum = 0;
         languageError.classList.add(SECTION_HIDDEN_CLASS);
         showSection('game');
         showSentence();
@@ -263,15 +358,19 @@ function initTyping() {
             if (!current) {
                 return;
             }
-            if (input.value.trim() === current.sentence.trim()) {
-                input.classList.remove('error');
-                inputError.classList.add(SECTION_HIDDEN_CLASS);
-                handleSuccess();
-            } else {
-                input.classList.add('error');
-                inputError.classList.remove(SECTION_HIDDEN_CLASS);
-            }
+            const isCorrect = input.value.trim() === current.sentence.trim();
+            handleAdvance(isCorrect);
+            requestAnimationFrame(() => {
+                applyInputFeedback(isCorrect);
+                window.setTimeout(clearInputState, 400);
+            });
         }
+    });
+
+    input?.addEventListener('input', () => {
+        clearInputState();
+        updateCurrentSpeed();
+        renderPromptHighlight(input.value);
     });
 
     showSection('select');
