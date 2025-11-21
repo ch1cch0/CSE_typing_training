@@ -26,6 +26,7 @@ function initTyping() {
     const restartButton = document.getElementById('typing-restart');
     const exitButton = document.getElementById('typing-exit');
     const languageError = document.getElementById('typing-language-error');
+    const submitButton = document.getElementById('typing-submit');
     const input = document.getElementById('typing-input');
     const promptEl = document.getElementById('typing-prompt');
     const languageLabel = document.getElementById('typing-language-label');
@@ -394,6 +395,7 @@ function initQuiz() {
     const startButton = document.getElementById('quiz-start');
     const restartButton = document.getElementById('quiz-restart');
     const exitButton = document.getElementById('quiz-exit');
+    const submitButton = document.getElementById('quiz-submit');
     const input = document.getElementById('quiz-input');
     const promptEl = document.getElementById('quiz-prompt');
     const languageLabel = document.getElementById('quiz-language-label');
@@ -500,7 +502,7 @@ function initQuiz() {
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
                 pendingTimeout = null;
                 proceed();
-            }, 500);
+            }, 3000);
         } else {
             wrong += 1;
             showFeedback(`오답입니다! 정답: ${current.keyword}`, true);
@@ -509,7 +511,7 @@ function initQuiz() {
                 feedbackEl?.classList.add(SECTION_HIDDEN_CLASS);
                 pendingTimeout = null;
                 proceed();
-            }, 800);
+            }, 3000);
         }
     };
 
@@ -578,6 +580,13 @@ function initQuiz() {
             }
             evaluateAnswer();
         }
+    });
+
+    submitButton?.addEventListener('click', () => {
+        if (pendingTimeout) {
+            return;
+        }
+        evaluateAnswer();
     });
 
     showSection('select');
