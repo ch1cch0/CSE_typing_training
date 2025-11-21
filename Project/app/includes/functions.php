@@ -134,12 +134,12 @@ function update_quiz_progress(int $userId, int $correctAnswers): ?array
 }
 
 // 레벨 재계산
-// logic: 타자 + 퀴즈 합 100 당 레벨 1 상승
+// logic: 타자 + 퀴즈 합 50 당 레벨 1 상승
 function recalculate_level(PDO $pdo, int $userId): void
 {
     $stmt = $pdo->prepare(
         'UPDATE users
-         SET level = FLOOR((total_typing + total_quiz) / 100)
+         SET level = FLOOR((total_typing + total_quiz) / 50)
          WHERE id = :id'
     );
     $stmt->execute(['id' => $userId]);

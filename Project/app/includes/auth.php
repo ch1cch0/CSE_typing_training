@@ -102,7 +102,7 @@ function set_session_user(array $user): void
 // 현재 로그인된 유저 정보 가져오는 함수
 function current_user(): ?array
 {
-    /** @var array<string, mixed>|null $user */
+    /* @var array<string, mixed>|null $user */
     $user = $_SESSION['user'] ?? null;
 
     return $user;
