@@ -77,6 +77,7 @@ $quizLanguages = array_keys($questions);
             </div>
             <div class="action-row">
                 <button type="button" class="secondary" id="quiz-exit">나가기</button>
+                <button type="button" class="primary" id="quiz-submit">제출</button>
             </div>
         </section>
 
