@@ -73,7 +73,7 @@ function initTyping() {
     const summaryAccuracy = document.getElementById('typing-summary-accuracy');
 
     // 게임 한 판에 20문장
-    const TARGET_SENTENCES = 20;
+    const TARGET_SENTENCES = 10;
     const CURRENT_SPEED_INTERVAL = 200;
 
     let rounds = [];
@@ -436,7 +436,7 @@ function initQuiz() {
     const summaryCorrect = document.getElementById('quiz-summary-correct');
     const summaryWrong = document.getElementById('quiz-summary-wrong');
 
-    const TARGET_QUESTIONS = 20;
+    const TARGET_QUESTIONS = 5;
     let rounds = [];
     let index = 0;
     let correct = 0;
@@ -562,7 +562,17 @@ function initQuiz() {
             return;
         }
 
-        rounds = shuffle(pool).slice(0, Math.min(TARGET_QUESTIONS, pool.length));
+        const shuffled = shuffle(pool);
+        if (shuffled.length >= TARGET_QUESTIONS) {
+            rounds = shuffled.slice(0, TARGET_QUESTIONS);
+        } else {
+            const needed = TARGET_QUESTIONS - shuffled.length;
+            const extras = [];
+            for (let i = 0; i < needed; i += 1) {
+                extras.push(shuffled[i % shuffled.length]);
+            }
+            rounds = [...shuffled, ...extras];
+        }
         index = 0;
         correct = 0;
         wrong = 0;

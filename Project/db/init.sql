@@ -93,4 +93,16 @@ INSERT INTO quiz_questions (language, keyword, description) VALUES
 ('Python', 'list comprehension', 'Expression that builds a list from an iterable in a single line.'),
 ('Python', 'context manager', 'Protocol that controls setup and teardown around a with block.'),
 ('Python', 'dataclass', 'Decorator adding generated methods to simple data containers.'),
-('Python', 'generator', 'Function that yields lazy sequences using the yield keyword.');
+('Python', 'generator', 'Function that yields lazy sequences using the yield keyword.'),
+('C++', 'lambda', 'Inline function object created with [] capture syntax.'),
+('Java', 'lambda', 'Concise anonymous function introduced in Java 8.'),
+('Python', 'decorator', 'Function that wraps another function to modify behavior.'),
+('C++', 'std::forward', 'Perfect-forwarding utility to preserve value category for function arguments.'),
+('C++', 'unique_ptr', 'Move-only smart pointer owning a single object with deterministic release.'),
+('C++', 'RAII', 'Resource Acquisition Is Initialization: manage resources via object lifetime.'),
+('Java', 'try-with-resources', 'Automatic resource management using try(...) to close resources.'),
+('Java', 'CompletableFuture', 'Asynchronous computation stage supporting chaining and composition.'),
+('Java', 'Garbage Collector', 'JVM component that automatically reclaims unused objects.'),
+('Python', 'virtualenv', 'Isolated Python environment with its own interpreter and packages.'),
+('Python', 'type hint', 'Static-friendly annotations that declare expected types of values.'),
+('Python', 'list slicing', 'Syntax to take sublists via start:stop:step on sequences.');
