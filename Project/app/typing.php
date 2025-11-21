@@ -82,7 +82,6 @@ $sentences = get_typing_sentences_indexed();
             </div>
             <div class="action-row">
                 <button type="button" class="secondary" id="typing-exit">나가기</button>
-                <button type="button" class="primary" id="typing-submit">제출</button>
             </div>
         </section>
 
