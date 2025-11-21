@@ -144,3 +144,33 @@ function recalculate_level(PDO $pdo, int $userId): void
     );
     $stmt->execute(['id' => $userId]);
 }
+
+function get_level_ranking(int $limit = 3): array
+{
+    $pdo = get_db();
+    $stmt = $pdo->prepare(
+        'SELECT id, username, level, highest_speed
+         FROM users
+         ORDER BY level DESC, highest_speed DESC, id ASC
+         LIMIT :limit'
+    );
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll() ?: [];
+}
+
+function get_speed_ranking(int $limit = 3): array
+{
+    $pdo = get_db();
+    $stmt = $pdo->prepare(
+        'SELECT id, username, highest_speed, level
+         FROM users
+         ORDER BY highest_speed DESC, level DESC, id ASC
+         LIMIT :limit'
+    );
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll() ?: [];
+}

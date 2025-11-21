@@ -3,10 +3,42 @@ const SECTION_HIDDEN_CLASS = 'hidden';
 
 // 페이지 로딩 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
+    initMain();
     initTyping();
     initQuiz();
     initSearch();
 });
+
+function initMain() {
+    if (!document.body.classList.contains('page-main')) {
+        return;
+    }
+
+    const openBtn = document.getElementById('open-ranking');
+    const closeBtn = document.getElementById('ranking-close');
+    const overlay = document.getElementById('ranking-overlay');
+
+    const setVisible = (show) => {
+        if (!overlay) {
+            return;
+        }
+        overlay.classList.toggle(SECTION_HIDDEN_CLASS, !show);
+        overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+    };
+
+    openBtn?.addEventListener('click', () => setVisible(true));
+    closeBtn?.addEventListener('click', () => setVisible(false));
+    overlay?.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+            setVisible(false);
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            setVisible(false);
+        }
+    });
+}
 
 // 타자 연습 페이지 전용 로직
 function initTyping() {
